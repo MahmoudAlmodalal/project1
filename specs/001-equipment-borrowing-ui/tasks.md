@@ -48,18 +48,18 @@
 **Independent Test**: An authenticated student with an `ACTIVE` account can view catalog items, apply filters, open the request dialog, submit a loan with justification and duration (1–10 days), verify it appears under `SCR-03` with status `PENDING_REVIEW`, and test 1-click self-cancellation.
 
 ### Tests for User Story 1
-- [ ] T013 [P] [US1] Unit tests for loan booking duration rules (1–10 days), quota check (max 2 active), and self-cancel validation in `tests/unit/loan-service.test.ts`
-- [ ] T014 [P] [US1] Integration tests for catalog listing and booking API endpoints in `tests/integration/catalog-booking.test.ts`
+- [X] T013 [P] [US1] Unit tests for loan booking duration rules (1–10 days), quota check (max 2 active), and self-cancel validation in `tests/unit/loan-service.test.ts`
+- [X] T014 [P] [US1] Integration tests for catalog listing and booking API endpoints in `tests/integration/catalog-booking.test.ts`
 
 ### Implementation for User Story 1
-- [ ] T015 [P] [US1] Implement `LoanService` methods (`createBookingRequest`, `getStudentLoans`, `selfCancelRequest`) in `src/services/loan.service.ts`
-- [ ] T016 [P] [US1] Implement Equipment Catalog API endpoint with search and category filtering in `src/app/api/v1/equipment/route.ts`
-- [ ] T017 [US1] Implement Loan submission and self-cancellation API endpoints in `src/app/api/v1/loans/route.ts` and `src/app/api/v1/loans/[id]/cancel/route.ts`
-- [ ] T018 [P] [US1] Build responsive equipment catalog card with live availability indicators in `src/components/catalog/EquipmentCard.tsx`
-- [ ] T019 [P] [US1] Build booking modal dialog (`SCR-04-M`) with 1–10 day duration stepper and academic purpose textarea in `src/components/catalog/BookingDialog.tsx`
-- [ ] T020 [US1] Implement Equipment Catalog page (`SCR-04`) with multi-column grid, search, and category chips in `src/app/(student)/catalog/page.tsx`
-- [ ] T021 [US1] Implement Equipment Details page (`SCR-05`) with specs table and sticky reservation card in `src/app/(student)/catalog/[id]/page.tsx`
-- [ ] T022 [US1] Implement Student Loans Portal page (`SCR-03`) with KPI cards, active countdowns, and self-cancel trigger in `src/app/(student)/portal/page.tsx`
+- [X] T015 [P] [US1] Implement `LoanService` methods (`createBookingRequest`, `getStudentLoans`, `selfCancelRequest`) in `src/services/loan.service.ts`
+- [X] T016 [P] [US1] Implement Equipment Catalog API endpoint with search and category filtering in `src/app/api/v1/equipment/route.ts`
+- [X] T017 [US1] Implement Loan submission and self-cancellation API endpoints in `src/app/api/v1/loans/route.ts` and `src/app/api/v1/loans/[id]/cancel/route.ts`
+- [X] T018 [P] [US1] Build responsive equipment catalog card with live availability indicators in `src/components/catalog/EquipmentCard.tsx`
+- [X] T019 [P] [US1] Build booking modal dialog (`SCR-04-M`) with 1–10 day duration stepper and academic purpose textarea in `src/components/catalog/BookingDialog.tsx`
+- [X] T020 [US1] Implement Equipment Catalog page (`SCR-04`) with multi-column grid, search, and category chips in `src/app/(student)/catalog/page.tsx`
+- [X] T021 [US1] Implement Equipment Details page (`SCR-05`) with specs table and sticky reservation card in `src/app/(student)/catalog/[id]/page.tsx`
+- [X] T022 [US1] Implement Student Loans Portal page (`SCR-03`) with KPI cards, active countdowns, and self-cancel trigger in `src/app/(student)/portal/page.tsx`
 
 **Checkpoint**: User Story 1 delivers a fully functional, self-service student borrowing discovery and reservation MVP.
 
