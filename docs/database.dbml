@@ -1,0 +1,131 @@
+Project BorrowHub_MVP {
+  database_type: 'PostgreSQL'
+  Note: 'Proposed technical schema based on PRD v1.0.0. See ERD.md and database-review.md for unresolved business rules. Notes do not enforce cross-row invariants.'
+}
+
+Enum user_role {
+  STUDENT
+  ADMIN
+}
+Enum account_status {
+  PENDING_APPROVAL
+  ACTIVE
+  REJECTED
+}
+Enum loan_status {
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  CANCELLED
+  EXPIRED
+  CHECKED_OUT
+  OVERDUE
+  RETURNED
+}
+Enum loan_action {
+  APPROVED
+  CHECKED_OUT
+  RETURNED
+  DAMAGED
+}
+
+Table users {
+  id uuid [pk, not null, note: 'UUID allocation is an implementation choice.']
+  full_name text [not null, check: `length(btrim(full_name)) > 0`]
+  email text [not null, unique, check: `length(btrim(email)) > 0`, note: 'Canonical email policy and allowed university domains must be confirmed.']
+  password_hash text [not null, check: `length(btrim(password_hash)) > 0`, note: 'Salted bcrypt hash per SEC-01; never plaintext.']
+  student_number text [unique, note: 'PRD student_id number; distinct from loan_requests.student_id, which references users.id.']
+  department text [note: 'Required for students by FR-001; no managed department entity is specified.']
+  phone_number text [note: 'Required for students; store as text to preserve + and leading zeroes.']
+  role user_role [not null, note: 'Never accept ADMIN from public registration.']
+  status account_status [not null, default: 'PENDING_APPROVAL']
+  created_at timestamptz [not null, default: `now()`]
+  checks {
+    `role <> 'STUDENT' OR (student_number IS NOT NULL AND length(btrim(student_number)) > 0 AND department IS NOT NULL AND length(btrim(department)) > 0 AND phone_number IS NOT NULL AND length(btrim(phone_number)) > 0)` [name: 'student_registration_fields']
+  }
+  indexes {
+    (role, status)
+  }
+  Note: 'Student-specific fields may be NULL for admins. Role checks on referenced users require transaction-level enforcement; FK alone does not verify role or eligibility.'
+}
+
+Table equipment_categories {
+  id uuid [pk, not null]
+  name text [not null, check: `length(btrim(name)) > 0`]
+  Note: 'One category per equipment entry is a proposed representation of PRD category. Category name uniqueness is not a confirmed requirement.'
+}
+
+Table equipment {
+  id uuid [pk, not null]
+  category_id uuid [not null]
+  name text [not null, check: `length(btrim(name)) > 0`]
+  description text [not null, note: 'FR-007 requires a description; no minimum content length is specified.']
+  total_quantity integer [not null, check: `total_quantity >= 0`]
+  available_quantity integer [not null, check: `available_quantity >= 0`]
+  reserved_quantity integer [not null, check: `reserved_quantity >= 0`]
+  borrowed_quantity integer [not null, check: `borrowed_quantity >= 0`]
+  damaged_quantity integer [not null, check: `damaged_quantity >= 0`]
+  archived_at timestamptz [note: 'NULL means not archived; archival consequences need clarification.']
+  created_at timestamptz [not null, default: `now()`]
+  indexes {
+    category_id
+  }
+  Note: 'Aggregate counters are intentional denormalization for FR-007/008. Initialize explicitly and update with loan state and audit in one transaction. No total equation is imposed until damaged-stock semantics are resolved.'
+}
+
+Table loan_requests {
+  id uuid [pk, not null]
+  student_id uuid [not null, note: 'References a STUDENT user, ACTIVE on submission.']
+  equipment_id uuid [not null]
+  quantity integer [not null, default: 1, check: `quantity = 1`]
+  purpose text [not null, check: `length(btrim(purpose)) > 0`]
+  start_date date [not null]
+  requested_return_date date [not null, note: 'Requested date range; distinct from operational due timestamp.']
+  expected_return_at timestamptz [note: 'Operational deadline required before checkout. Calculation and campus timezone are unresolved.']
+  status loan_status [not null, default: 'PENDING_REVIEW']
+  rejection_reason text [note: 'Mandatory nonblank text when REJECTED.']
+  requested_at timestamptz [not null, default: `now()`]
+  approved_at timestamptz
+  checked_out_at timestamptz
+  returned_at timestamptz
+  is_damaged boolean [note: 'NULL before return; false for healthy return, true for damaged return, proposed per AC-05.']
+  damage_notes text [note: 'Optional per FR-022; NULL allowed even for damaged return.']
+  checks {
+    `requested_return_date >= start_date AND requested_return_date <= start_date + 10` [name: 'requested_duration_max_10_days']
+    `status <> 'REJECTED' OR (rejection_reason IS NOT NULL AND length(btrim(rejection_reason)) > 0)` [name: 'rejection_requires_reason']
+    `status NOT IN ('APPROVED', 'EXPIRED', 'CHECKED_OUT', 'OVERDUE', 'RETURNED') OR approved_at IS NOT NULL` [name: 'approval_timestamp_required']
+    `status NOT IN ('CHECKED_OUT', 'OVERDUE', 'RETURNED') OR (checked_out_at IS NOT NULL AND expected_return_at IS NOT NULL)` [name: 'checkout_fields_required']
+    `(status = 'RETURNED' AND returned_at IS NOT NULL AND is_damaged IS NOT NULL) OR (status <> 'RETURNED' AND returned_at IS NULL AND is_damaged IS NULL)` [name: 'return_fields_match_state']
+    `damage_notes IS NULL OR is_damaged IS TRUE` [name: 'damage_notes_require_damage']
+    `approved_at IS NULL OR approved_at >= requested_at` [name: 'approval_time_order']
+    `checked_out_at IS NULL OR (approved_at IS NOT NULL AND checked_out_at >= approved_at)` [name: 'checkout_time_order']
+    `returned_at IS NULL OR (checked_out_at IS NOT NULL AND returned_at >= checked_out_at)` [name: 'return_time_order']
+  }
+  indexes {
+    (student_id, status)
+    equipment_id
+    (status, requested_at)
+    (status, start_date)
+    (status, expected_return_at)
+  }
+  Note: 'OVERDUE retained from PRD section 16 as a supported vocabulary, not a decision to persist it. State transitions, max two active loans, role checks, deadline calculation and 48-hour expiry need transactional enforcement and resolved business policies. Audit holds the acting admin; no duplicated approved_by column.'
+}
+
+Table loan_action_logs {
+  id uuid [pk, not null]
+  loan_request_id uuid [not null]
+  actor_id uuid [not null, note: 'Must reference ADMIN at action time.']
+  action loan_action [not null]
+  occurred_at timestamptz [not null]
+  indexes {
+    (loan_request_id, occurred_at)
+    actor_id
+  }
+  Note: 'Append-only audit of NFR-008 actions. Damaged return records RETURNED and DAMAGED in the same transaction, with the same actor and timestamp. Current milestone timestamps support FR-020; event records support accountability. No account-review audit or generic JSON payload is added.'
+}
+
+Ref: equipment.category_id > equipment_categories.id [delete: restrict, update: restrict]
+Ref: loan_requests.student_id > users.id [delete: restrict, update: restrict]
+Ref: loan_requests.equipment_id > equipment.id [delete: restrict, update: restrict]
+Ref: loan_action_logs.loan_request_id > loan_requests.id [delete: restrict, update: restrict]
+Ref: loan_action_logs.actor_id > users.id [delete: restrict, update: restrict]

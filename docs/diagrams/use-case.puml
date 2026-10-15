@@ -1,0 +1,112 @@
+@startuml
+title BorrowHub MVP — Use Case Diagram
+left to right direction
+skinparam shadowing false
+skinparam nodesep 30
+skinparam ranksep 50
+skinparam packageStyle rectangle
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName SansSerif
+skinparam ArrowColor #475569
+skinparam usecase {
+  BackgroundColor #F8FAFC
+  BorderColor #334155
+}
+skinparam package {
+  BackgroundColor #FFFFFF
+  BorderColor #94A3B8
+}
+skinparam rectangle {
+  BorderColor #0F172A
+}
+
+actor "Student" as Student
+actor "Lab / Warehouse\nAdministrator (Admin / Staff)" as Admin
+
+rectangle "BorrowHub — MVP Web Application" {
+  package "Student Services" {
+    usecase "Register Student Account" as UC01
+    usecase "Reset Password" as UC03
+    usecase "Search / Filter Equipment" as UC07
+    usecase "Submit Loan Request" as UC10
+    usecase "Track Own Requests & Loans" as UC11
+    usecase "Cancel Own Pending Request" as UC12
+  }
+
+  package "Shared Access" {
+    usecase "Log In" as UC02
+    usecase "Browse Equipment Catalog" as UC06
+  }
+
+  package "Administration" {
+    usecase "Review Student Registrations\n(Approve / Reject)" as UC04
+    usecase "Suspend Student Account\n(Manually)" as UC05
+    usecase "Manage Equipment\n(Add / Edit / Archive / Adjust Quantities)" as UC08
+    usecase "Manage Equipment Categories" as UC09
+    usecase "View Departmental Requests & Loans\n(Filter / Review Details)" as UC13
+    usecase "Approve Loan Request" as UC14
+    usecase "Reject Loan Request" as UC15
+    usecase "Confirm Equipment Handover" as UC16
+    usecase "Confirm Equipment Return\n--\nextension points:\nrecord equipment condition" as UC17
+    usecase "Flag Returned Equipment as Damaged" as UC18
+    usecase "View Admin Dashboard" as UC19
+    usecase "View Overdue Loans &\nStudent Contact Details" as UC20
+  }
+
+  package "Automatic Monitoring" {
+    usecase "Expire Uncollected Reservations" as UC21
+    usecase "Detect Overdue Loans" as UC22
+  }
+
+  package "Mandatory Shared Behavior" {
+    usecase "Check Equipment Availability" as UC23
+    usecase "Update Inventory Balances Atomically" as UC24
+  }
+}
+
+Student -- UC01
+Student -- UC02
+Student -- UC03
+Student -- UC06
+Student -- UC07
+Student -- UC10
+Student -- UC11
+Student -- UC12
+
+UC02 -- Admin
+UC04 -- Admin
+UC05 -- Admin
+UC06 -- Admin
+UC08 -- Admin
+UC09 -- Admin
+UC13 -- Admin
+UC14 -- Admin
+UC15 -- Admin
+UC16 -- Admin
+UC17 -- Admin
+UC18 -- Admin
+UC19 -- Admin
+UC20 -- Admin
+
+UC10 ..> UC23 : <<include>>
+UC14 ..> UC23 : <<include>>
+UC14 ..> UC24 : <<include>>
+UC16 ..> UC24 : <<include>>
+UC17 ..> UC24 : <<include>>
+UC21 ..> UC24 : <<include>>
+
+UC18 ..> UC17 : <<extend>>\n[damage found]\nat record equipment condition
+
+legend bottom
+  Solid line: actor participation
+  <<include>>: mandatory shared behavior
+  <<extend>>: conditional behavior
+  Log In, Submit, Cancel: ACTIVE account required.
+  Submit: 1 unit; < 2 active loans; <= 10 calendar days; purpose required.
+  Cancel: own PENDING_REVIEW request only. Reject loan: reason required.
+  Expiry: uncollected APPROVED reservation, 48 hours from requested start.
+  Overdue: not returned after expected return time; internal detection.
+  Pending catalog / own-loan access: unresolved source conflict.
+  Reset Password / manual Suspend: PRD section 14; rules unspecified.
+endlegend
+@enduml

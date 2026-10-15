@@ -1,0 +1,47 @@
+flowchart LR
+    subgraph eligibility["أهلية الاستعارة"]
+        Student["الطالب الجامعي"]
+        Account["حساب الطالب<br/>اعتماد يدوي قبل تقديم الطلب"]
+        Admin["مسؤول المعمل / المستودع"]
+    end
+
+    subgraph inventory["كتالوج المعدات والمخزون"]
+        Equipment["المعدة<br/>صنف أو نموذج معدات، لا قطعة مرقمة"]
+        Category["فئة المعدات"]
+        Stock["المخزون التجميعي<br/>متاح · محجوز · مستعار · تالف"]
+    end
+
+    subgraph borrowing["إدارة الإعارة والإرجاع"]
+        Loan["طلب الاستعارة / الإعارة<br/>وحدة واحدة لكل طلب<br/>حد أقصى 10 أيام تقويمية"]
+        Return["الإرجاع<br/>تأكيد الاستلام وفحص الحالة"]
+        Damage["التلف عند الإرجاع<br/>لا يعيد الوحدة إلى المتاح"]
+        Overdue["التأخر عن موعد الإرجاع<br/>متابعة يدوية دون حظر تلقائي"]
+        Audit["سجل إجراءات الإعارة<br/>توثيق المسؤول عن الإجراءات"]
+    end
+
+    Student -->|"يسجل حسابه ويتابع اعتماده"| Account
+    Admin -->|"يراجع الحساب ويعتمده أو يرفضه"| Account
+    Student -->|"يقدم ويتابع؛ بحد أقصى طلبين نشطين"| Loan
+    Account -->|"اعتماده شرط لتقديم"| Loan
+    Admin -->|"يراجع ويوافق أو يرفض ويؤكد التسليم"| Loan
+    Loan -->|"يطلب وحدة واحدة من"| Equipment
+    Equipment -->|"يصنف حسب"| Category
+    Admin -->|"يدير ويؤرشف"| Equipment
+    Equipment -->|"تتابع كمياته في"| Stock
+    Loan -->|"يحجز عند الموافقة؛ يحرر الحجز عند انتهاء مهلة الاستلام"| Stock
+    Loan -->|"تغلق عند تأكيد"| Return
+    Admin -->|"يفحص ويؤكد"| Return
+    Return -->|"يعيد الوحدة السليمة إلى المتاح"| Stock
+    Return -->|"قد يوثق"| Damage
+    Damage -->|"يحول الوحدة المستعارة إلى التالف"| Stock
+    Loan -->|"توصف بالتأخر إذا تجاوزت موعدها دون إرجاع"| Overdue
+    Admin -->|"يتابع الطالب يدويًا بشأن"| Overdue
+    Loan -->|"توثق إجراءاتها في"| Audit
+    Admin -->|"تنسب إليه الموافقة والتسليم والإرجاع أو تسجيل التلف"| Audit
+
+    classDef actor fill:#eff6ff,stroke:#2563eb,color:#172554;
+    classDef concept fill:#f8fafc,stroke:#64748b,color:#0f172a;
+    classDef exception fill:#fff7ed,stroke:#c2410c,color:#7c2d12;
+    class Student,Admin actor;
+    class Account,Equipment,Category,Stock,Loan,Return,Audit concept;
+    class Damage,Overdue exception;
