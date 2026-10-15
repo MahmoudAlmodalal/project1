@@ -115,13 +115,13 @@
 **Independent Test**: Artificially age a loan past its return date, verify it surfaces prominently on `SCR-09` with overdue badges, verify the delinquent student cannot create new loans, execute the "Immediate Return" action on `SCR-09`, and confirm the student's booking privileges are immediately restored.
 
 ### Tests for User Story 4
-- [ ] T038 [P] [US4] Unit tests for real-time overdue detection, student booking block rule, and auto-reinstatement upon check-in in `tests/unit/overdue.test.ts`
-- [ ] T039 [P] [US4] Integration tests for Overdue dashboard API and immediate check-in action in `tests/integration/overdue-dashboard.test.ts`
+- [X] T038 [P] [US4] Unit tests for real-time overdue detection, student booking block rule, and auto-reinstatement upon check-in in `tests/unit/overdue.test.ts`
+- [X] T039 [P] [US4] Integration tests for Overdue dashboard API and immediate check-in action in `tests/integration/overdue-dashboard.test.ts`
 
 ### Implementation for User Story 4
-- [ ] T040 [P] [US4] Implement overdue query helpers and student eligibility checks in `src/services/loan.service.ts`
-- [ ] T041 [US4] Implement Overdue dashboard API endpoint with student contact details and days overdue in `src/app/api/v1/admin/overdue/route.ts`
-- [ ] T042 [US4] Implement Overdue Alerts Dashboard screen (`SCR-09`) with high-contrast alert badges, direct call/email links, and immediate return action in `src/app/(admin)/admin/overdue/page.tsx`
+- [X] T040 [P] [US4] Implement overdue query helpers and student eligibility checks in `src/services/loan.service.ts`
+- [X] T041 [US4] Implement Overdue dashboard API endpoint with student contact details and days overdue in `src/app/api/v1/admin/overdue/route.ts`
+- [X] T042 [US4] Implement Overdue Alerts Dashboard screen (`SCR-09`) with high-contrast alert badges, direct call/email links, and immediate return action in `src/app/(admin)/admin/overdue/page.tsx`
 
 **Checkpoint**: User Story 4 enforces departmental asset recovery and automated borrowing policy compliance.
 

@@ -382,5 +382,171 @@ export class LoanService {
       },
     };
   }
+
+  /**
+   * Check student borrowing eligibility (SCR-04, SCR-05):
+   * Student must be ACTIVE, have 0 OVERDUE loans, and fewer than 2 active loans.
+   */
+  static async checkStudentEligibility(userId: string) {
+    const student = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!student || student.status !== UserStatus.ACTIVE) {
+      return {
+        isEligible: false,
+        hasOverdue: false,
+        activeLoansCount: 0,
+        reason: "STUDENT_NOT_ACTIVE",
+      };
+    }
+
+    const overdueCount = await prisma.loan.count({
+      where: {
+        userId,
+        status: LoanStatus.OVERDUE,
+      },
+    });
+
+    if (overdueCount > 0) {
+      return {
+        isEligible: false,
+        hasOverdue: true,
+        activeLoansCount: overdueCount,
+        reason: "STUDENT_OVERDUE_BLOCKED",
+      };
+    }
+
+    const activeCount = await prisma.loan.count({
+      where: {
+        userId,
+        status: {
+          in: [LoanStatus.PENDING_REVIEW, LoanStatus.APPROVED, LoanStatus.CHECKED_OUT],
+        },
+      },
+    });
+
+    if (activeCount >= 2) {
+      return {
+        isEligible: false,
+        hasOverdue: false,
+        activeLoansCount: activeCount,
+        reason: "QUOTA_EXCEEDED",
+      };
+    }
+
+    return {
+      isEligible: true,
+      hasOverdue: false,
+      activeLoansCount: activeCount,
+      reason: null,
+    };
+  }
+
+  /**
+   * Synchronize checked out loans whose expectedReturnDate has elapsed into OVERDUE status.
+   */
+  static async syncOverdueLoans(now: Date = new Date()) {
+    const overdueLoans = await prisma.loan.findMany({
+      where: {
+        status: LoanStatus.CHECKED_OUT,
+        expectedReturnDate: {
+          lt: now,
+        },
+      },
+      select: { id: true },
+    });
+
+    if (overdueLoans.length === 0) {
+      return { syncedCount: 0 };
+    }
+
+    const ids = overdueLoans.map((l) => l.id);
+    await prisma.loan.updateMany({
+      where: {
+        id: { in: ids },
+      },
+      data: {
+        status: LoanStatus.OVERDUE,
+      },
+    });
+
+    return { syncedCount: ids.length };
+  }
+
+  /**
+   * Query overdue loans for SCR-09 dashboard with days_overdue and student contact information.
+   */
+  static async getOverdueLoans(params: { search?: string; page?: number; limit?: number; now?: Date } = {}) {
+    const { search, page = 1, limit = 20, now = new Date() } = params;
+
+    const where: any = {
+      OR: [
+        { status: LoanStatus.OVERDUE },
+        {
+          status: LoanStatus.CHECKED_OUT,
+          expectedReturnDate: {
+            lt: now,
+          },
+        },
+      ],
+    };
+
+    if (search && search.trim().length > 0) {
+      const q = search.trim();
+      where.AND = [
+        {
+          OR: [
+            { user: { fullName: { contains: q, mode: "insensitive" } } },
+            { user: { studentId: { contains: q, mode: "insensitive" } } },
+            { user: { phone: { contains: q, mode: "insensitive" } } },
+            { user: { email: { contains: q, mode: "insensitive" } } },
+            { equipment: { nameAr: { contains: q, mode: "insensitive" } } },
+            { equipment: { nameEn: { contains: q, mode: "insensitive" } } },
+          ],
+        },
+      ];
+    }
+
+    const skip = (page - 1) * limit;
+
+    const [loans, total] = await Promise.all([
+      prisma.loan.findMany({
+        where,
+        include: {
+          user: true,
+          equipment: {
+            include: { category: true },
+          },
+        },
+        orderBy: { expectedReturnDate: "asc" },
+        skip,
+        take: limit,
+      }),
+      prisma.loan.count({ where }),
+    ]);
+
+    const formattedLoans = loans.map((loan) => {
+      const returnDate = loan.expectedReturnDate ? new Date(loan.expectedReturnDate) : now;
+      const diffMs = Math.max(0, now.getTime() - returnDate.getTime());
+      const daysOverdue = Math.max(1, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+
+      return {
+        ...loan,
+        daysOverdue,
+      };
+    });
+
+    return {
+      loans: formattedLoans,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit) || 1,
+      },
+    };
+  }
 }
+
 
