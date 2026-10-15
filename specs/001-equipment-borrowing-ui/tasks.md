@@ -28,14 +28,14 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T005 Define Prisma schema for `User`, `Category`, `Equipment`, `Loan`, and `DamageRecord` with enums and indexes in `prisma/schema.prisma`
-- [ ] T006 Implement database client instance with logging and transaction support in `src/lib/db/prisma.ts`
-- [ ] T007 [P] Create initial database seed script with categories, sample equipment, and admin/student test users in `prisma/seed.ts`
-- [ ] T008 [P] Implement session management and JWT authentication utilities with cookie helpers in `src/lib/auth/session.ts`
-- [ ] T009 [P] Implement internationalization / directionality state provider for instant Arabic RTL / English LTR flipping in `src/components/layout/DirectionProvider.tsx`
-- [ ] T010 [P] Build core UI primitives (Button, Input, Dialog/Modal, Badge, Card, Skeleton) following WCAG 2.1 AA in `src/components/ui/`
-- [ ] T011 Build responsive navigation header with language switcher and dynamic student/admin sidebar in `src/components/layout/Header.tsx` and `src/components/layout/Sidebar.tsx`
-- [ ] T012 Implement root application layout applying dynamic `dir="rtl"` / `dir="ltr"` and direction provider in `src/app/layout.tsx`
+- [X] T005 Define Prisma schema for `User`, `Category`, `Equipment`, `Loan`, and `DamageRecord` with enums and indexes in `prisma/schema.prisma`
+- [X] T006 Implement database client instance with logging and transaction support in `src/lib/db/prisma.ts`
+- [X] T007 [P] Create initial database seed script with categories, sample equipment, and admin/student test users in `prisma/seed.ts`
+- [X] T008 [P] Implement session management and JWT authentication utilities with cookie helpers in `src/lib/auth/session.ts`
+- [X] T009 [P] Implement internationalization / directionality state provider for instant Arabic RTL / English LTR flipping in `src/components/layout/DirectionProvider.tsx`
+- [X] T010 [P] Build core UI primitives (Button, Input, Dialog/Modal, Badge, Card, Skeleton) following WCAG 2.1 AA in `src/components/ui/`
+- [X] T011 Build responsive navigation header with language switcher and dynamic student/admin sidebar in `src/components/layout/Header.tsx` and `src/components/layout/Sidebar.tsx`
+- [X] T012 Implement root application layout applying dynamic `dir="rtl"` / `dir="ltr"` and direction provider in `src/app/layout.tsx`
 
 **Checkpoint**: Foundation ready — user story implementation can now begin.
 
