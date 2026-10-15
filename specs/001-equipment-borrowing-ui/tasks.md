@@ -156,14 +156,14 @@
 **Independent Test**: Admin navigates to `SCR-10`, adds a new equipment item with specifications and quantity counts, edits stock, and verifies that the new item appears instantly in the student catalog.
 
 ### Tests for User Story 6
-- [ ] T051 [P] [US6] Unit tests for equipment CRUD, non-negative quantity constraints, and aggregate stock conservation in `tests/unit/inventory-service.test.ts`
-- [ ] T052 [P] [US6] Integration tests for admin equipment creation and update endpoints in `tests/integration/inventory-crud.test.ts`
+- [x] T051 [P] [US6] Unit tests for equipment CRUD, non-negative quantity constraints, and aggregate stock conservation in `tests/unit/inventory-service.test.ts`
+- [x] T052 [P] [US6] Integration tests for admin equipment creation and update endpoints in `tests/integration/inventory-crud.test.ts`
 
 ### Implementation for User Story 6
-- [ ] T053 [P] [US6] Implement `InventoryService` methods (`createEquipment`, `updateEquipment`, `archiveEquipment`) in `src/services/inventory.service.ts`
-- [ ] T054 [US6] Implement Admin Inventory CRUD API routes in `src/app/api/v1/admin/inventory/route.ts` and `src/app/api/v1/admin/inventory/[id]/route.ts`
-- [ ] T055 [P] [US6] Build equipment modal form (`SCR-10-M`) for adding and editing gear with image URL and quantity inputs in `src/components/admin/EquipmentFormDialog.tsx`
-- [ ] T056 [US6] Implement Inventory Management screen (`SCR-10`) with aggregate KPI cards and stock edit tables in `src/app/(admin)/admin/inventory/page.tsx`
+- [x] T053 [P] [US6] Implement `InventoryService` methods (`createEquipment`, `updateEquipment`, `archiveEquipment`) in `src/services/inventory.service.ts`
+- [x] T054 [US6] Implement Admin Inventory CRUD API routes in `src/app/api/v1/admin/inventory/route.ts` and `src/app/api/v1/admin/inventory/[id]/route.ts`
+- [x] T055 [P] [US6] Build equipment modal form (`SCR-10-M`) for adding and editing gear with image URL and quantity inputs in `src/components/admin/EquipmentFormDialog.tsx`
+- [x] T056 [US6] Implement Inventory Management screen (`SCR-10`) with aggregate KPI cards and stock edit tables in `src/app/(admin)/admin/inventory/page.tsx`
 
 **Checkpoint**: User Story 6 completes total equipment lifecycle upkeep and catalog management.
 
