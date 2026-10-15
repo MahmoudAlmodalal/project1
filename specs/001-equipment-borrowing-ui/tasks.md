@@ -134,16 +134,16 @@
 **Independent Test**: Register a student on `SCR-02`, attempt login on `SCR-01` to observe the amber pending approval badge, log in as admin to approve the account on `SCR-11`, and verify the student can now authenticate and access the catalog.
 
 ### Tests for User Story 5
-- [ ] T043 [P] [US5] Unit tests for registration validation, password hashing, and account verification transitions in `tests/unit/account-service.test.ts`
-- [ ] T044 [P] [US5] Integration tests for registration, login, and admin user approval endpoints in `tests/integration/auth-verification.test.ts`
+- [X] T043 [P] [US5] Unit tests for registration validation, password hashing, and account verification transitions in `tests/unit/account-service.test.ts`
+- [X] T044 [P] [US5] Integration tests for registration, login, and admin user approval endpoints in `tests/integration/auth-verification.test.ts`
 
 ### Implementation for User Story 5
-- [ ] T045 [P] [US5] Implement `AccountService` methods (`registerStudent`, `authenticateUser`, `approveStudent`, `rejectStudent`) in `src/services/account.service.ts`
-- [ ] T046 [US5] Implement Auth API routes (register, login, logout) in `src/app/api/v1/auth/register/route.ts` and `src/app/api/v1/auth/login/route.ts`
-- [ ] T047 [US5] Implement Admin User Verification API endpoints in `src/app/api/v1/admin/users/route.ts` and `src/app/api/v1/admin/users/[id]/approve/route.ts`
-- [ ] T048 [P] [US5] Implement User Sign In screen (`SCR-01`) with role routing and pending alert banner in `src/app/(auth)/login/page.tsx`
-- [ ] T049 [P] [US5] Implement Student Registration screen (`SCR-02`) with 2-column grid and policy checkbox in `src/app/(auth)/register/page.tsx`
-- [ ] T050 [US5] Implement Student Account Verification screen (`SCR-11`) with tabbed pending/active/rejected tables and 1-click approvals in `src/app/(admin)/admin/users/page.tsx`
+- [X] T045 [P] [US5] Implement `AccountService` methods (`registerStudent`, `authenticateUser`, `approveStudent`, `rejectStudent`) in `src/services/account.service.ts`
+- [X] T046 [US5] Implement Auth API routes (register, login, logout) in `src/app/api/v1/auth/register/route.ts` and `src/app/api/v1/auth/login/route.ts`
+- [X] T047 [US5] Implement Admin User Verification API endpoints in `src/app/api/v1/admin/users/route.ts` and `src/app/api/v1/admin/users/[id]/approve/route.ts`
+- [X] T048 [P] [US5] Implement User Sign In screen (`SCR-01`) with role routing and pending alert banner in `src/app/(auth)/login/page.tsx`
+- [X] T049 [P] [US5] Implement Student Registration screen (`SCR-02`) with 2-column grid and policy checkbox in `src/app/(auth)/register/page.tsx`
+- [X] T050 [US5] Implement Student Account Verification screen (`SCR-11`) with tabbed pending/active/rejected tables and 1-click approvals in `src/app/(admin)/admin/users/page.tsx`
 
 **Checkpoint**: User Story 5 completes secure onboarding and identity governance.
 
