@@ -93,16 +93,16 @@
 **Independent Test**: Hand over an approved item on `SCR-07` and confirm status updates to `CHECKED_OUT` with stock moving from `reserved` to `borrowed`. On `SCR-08`, perform a healthy return and verify stock increments `available_quantity`. On another item, submit a damage report and verify stock shifts to `damaged_quantity` with a linked `DamageRecord`.
 
 ### Tests for User Story 3
-- [ ] T030 [P] [US3] Unit tests for counter handover stock transition, extension ceiling (≤ 10 days cumulative), and damage logging in `tests/unit/counter-service.test.ts`
-- [ ] T031 [P] [US3] Integration tests for handover, healthy return, and damaged return API endpoints in `tests/integration/counter-operations.test.ts`
+- [X] T030 [P] [US3] Unit tests for counter handover stock transition, extension ceiling (≤ 10 days cumulative), and damage logging in `tests/unit/counter-service.test.ts`
+- [X] T031 [P] [US3] Integration tests for handover, healthy return, and damaged return API endpoints in `tests/integration/counter-operations.test.ts`
 
 ### Implementation for User Story 3
-- [ ] T032 [P] [US3] Implement `CounterService` methods (`checkoutHandover`, `returnHealthy`, `returnDamaged`, `extendLoanDuration`) in `src/services/counter.service.ts`
-- [ ] T033 [US3] Implement Counter API endpoints for checkout, returns, and extensions in `src/app/api/v1/admin/loans/[id]/checkout/route.ts`, `src/app/api/v1/admin/loans/[id]/return/route.ts`, and `src/app/api/v1/admin/loans/[id]/extend/route.ts`
-- [ ] T034 [P] [US3] Build Damage Inspection modal with severity selector and defect notes in `src/components/admin/DamageModal.tsx`
-- [ ] T035 [P] [US3] Build Counter Extension modal enforcing the 10-day cumulative limit in `src/components/admin/ExtensionModal.tsx`
-- [ ] T036 [US3] Implement Approved Pickups Counter screen (`SCR-07`) with 48h timers and 1-click handover in `src/app/(admin)/admin/pickups/page.tsx`
-- [ ] T037 [US3] Implement Returns & Inspection Counter screen (`SCR-08`) with 1-click healthy return and damage triggers in `src/app/(admin)/admin/returns/page.tsx`
+- [X] T032 [P] [US3] Implement `CounterService` methods (`checkoutHandover`, `returnHealthy`, `returnDamaged`, `extendLoanDuration`) in `src/services/counter.service.ts`
+- [X] T033 [US3] Implement Counter API endpoints for checkout, returns, and extensions in `src/app/api/v1/admin/loans/[id]/checkout/route.ts`, `src/app/api/v1/admin/loans/[id]/return/route.ts`, and `src/app/api/v1/admin/loans/[id]/extend/route.ts`
+- [X] T034 [P] [US3] Build Damage Inspection modal with severity selector and defect notes in `src/components/admin/DamageModal.tsx`
+- [X] T035 [P] [US3] Build Counter Extension modal enforcing the 10-day cumulative limit in `src/components/admin/ExtensionModal.tsx`
+- [X] T036 [US3] Implement Approved Pickups Counter screen (`SCR-07`) with 48h timers and 1-click handover in `src/app/(admin)/admin/pickups/page.tsx`
+- [X] T037 [US3] Implement Returns & Inspection Counter screen (`SCR-08`) with 1-click healthy return and damage triggers in `src/app/(admin)/admin/returns/page.tsx`
 
 **Checkpoint**: User Story 3 completes full physical counter operations and defect auditing.
 
