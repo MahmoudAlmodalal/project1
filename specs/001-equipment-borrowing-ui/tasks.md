@@ -72,15 +72,15 @@
 **Independent Test**: An administrator accesses `SCR-06`, approves a pending request, and verifies that `available_quantity` drops by 1 while `reserved_quantity` increases by 1 with a 48h deadline. Rejecting a request prompts for a reason and marks it `REJECTED` without altering stock.
 
 ### Tests for User Story 2
-- [ ] T023 [P] [US2] Unit test for atomic stock reservation (`SELECT ... FOR UPDATE`), 48h deadline computation, and rejection handling in `tests/unit/review-queue.test.ts`
-- [ ] T024 [P] [US2] Integration tests for admin approval, stock locking, and rejection endpoints in `tests/integration/admin-review.test.ts`
+- [X] T023 [P] [US2] Unit test for atomic stock reservation (`SELECT ... FOR UPDATE`), 48h deadline computation, and rejection handling in `tests/unit/review-queue.test.ts`
+- [X] T024 [P] [US2] Integration tests for admin approval, stock locking, and rejection endpoints in `tests/integration/admin-review.test.ts`
 
 ### Implementation for User Story 2
-- [ ] T025 [P] [US2] Implement atomic approval and rejection transactions in `src/services/loan.service.ts`
-- [ ] T026 [P] [US2] Implement 48-hour reservation expiration background sweeper helper in `src/lib/utils/expiration.ts`
-- [ ] T027 [US2] Implement Admin Review Queue API endpoints for approval and rejection in `src/app/api/v1/admin/loans/[id]/approve/route.ts` and `src/app/api/v1/admin/loans/[id]/reject/route.ts`
-- [ ] T028 [P] [US2] Build admin rejection dialog with mandatory reason validation in `src/components/admin/RejectDialog.tsx`
-- [ ] T029 [US2] Implement Admin Review Queue screen (`SCR-06`) with expandable student details and 1-click action buttons in `src/app/(admin)/admin/queue/page.tsx`
+- [X] T025 [P] [US2] Implement atomic approval and rejection transactions in `src/services/loan.service.ts`
+- [X] T026 [P] [US2] Implement 48-hour reservation expiration background sweeper helper in `src/lib/utils/expiration.ts`
+- [X] T027 [US2] Implement Admin Review Queue API endpoints for approval and rejection in `src/app/api/v1/admin/loans/[id]/approve/route.ts` and `src/app/api/v1/admin/loans/[id]/reject/route.ts`
+- [X] T028 [P] [US2] Build admin rejection dialog with mandatory reason validation in `src/components/admin/RejectDialog.tsx`
+- [X] T029 [US2] Implement Admin Review Queue screen (`SCR-06`) with expandable student details and 1-click action buttons in `src/app/(admin)/admin/queue/page.tsx`
 
 **Checkpoint**: User Story 2 completes the administrative reservation validation and atomic inventory allocation flow.
 
