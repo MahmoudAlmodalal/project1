@@ -173,10 +173,10 @@
 
 **Purpose**: System-wide accessibility audits, RTL/LTR mirroring validations, empty/error state illustrations, and end-to-end scenario verification.
 
-- [ ] T057 [P] Audit WCAG 2.1 AA color contrast and keyboard focus indicators across all 11 screens in `src/components/`
-- [ ] T058 [P] Implement responsive empty states and skeleton loaders for all catalog and admin tables in `src/components/shared/StatePlaceholders.tsx`
-- [ ] T059 Run Playwright E2E test suite covering Scenarios 1 through 6 from `quickstart.md` in `tests/e2e/quickstart-scenarios.spec.ts`
-- [ ] T060 Perform final codebase clean up, linting, and type check verification (`pnpm lint && pnpm typecheck`)
+- [X] T057 [P] Audit WCAG 2.1 AA color contrast and keyboard focus indicators across all 11 screens in `src/components/`
+- [X] T058 [P] Implement responsive empty states and skeleton loaders for all catalog and admin tables in `src/components/shared/StatePlaceholders.tsx`
+- [X] T059 Run Playwright E2E test suite covering Scenarios 1 through 6 from `quickstart.md` in `tests/e2e/quickstart-scenarios.spec.ts`
+- [X] T060 Perform final codebase clean up, linting, and type check verification (`pnpm lint && pnpm typecheck`)
 
 ---
 

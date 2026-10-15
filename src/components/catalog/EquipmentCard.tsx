@@ -2,12 +2,11 @@
 
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useDirection } from "@/components/layout/DirectionProvider";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Calendar, Eye, Layers } from "lucide-react";
+import { Calendar, Eye, Layers, ShieldAlert, CheckCircle2 } from "lucide-react";
 
 export interface EquipmentItem {
   id: string;
@@ -52,76 +51,113 @@ export function EquipmentCard({
 
   const getDisabledReason = () => {
     if (isPendingApproval) return t("الحساب بانتظار الاعتماد", "Account pending approval");
-    if (isDelinquent) return t("مقيد لوجود أجهزة متأخرة", "Blocked: overdue items");
-    if (hasMaxLoans) return t("وصلت للحد الأقصى (جهازين)", "Max 2 active loans reached");
-    if (!isAvailable) return t("غير متاح حالياً", "Out of stock");
+    if (isDelinquent) return t("مقيد: لديك أجهزة متأخرة", "Blocked: Overdue items");
+    if (hasMaxLoans) return t("الحد الأقصى مستهلك (جهازين)", "Max 2 active loans reached");
+    if (!isAvailable) return t("غير متوفر في المخزون", "Out of stock");
     return "";
   };
 
+  const displayName = locale === "ar" ? equipment.nameAr : equipment.nameEn;
+  const displayDesc = locale === "ar" ? equipment.descriptionAr : equipment.descriptionEn;
+  const displayCategory = equipment.category
+    ? locale === "ar"
+      ? equipment.category.nameAr
+      : equipment.category.nameEn
+    : null;
+
   return (
-    <Card className="flex flex-col overflow-hidden transition-all duration-200 hover:shadow-md border-border/80">
-      {/* Thumbnail with overlay status badge */}
-      <div className="relative aspect-[16/10] w-full bg-muted overflow-hidden">
+    <Card className="group relative flex flex-col h-full overflow-hidden rounded-xl border border-border/70 bg-card transition-all duration-200 hover:border-primary/40 hover:shadow-lg hover:-translate-y-0.5 focus-within:ring-2 focus-within:ring-primary/40">
+      {/* Media Header */}
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted/50">
         <img
           src={equipment.imageUrl}
-          alt={locale === "ar" ? equipment.nameAr : equipment.nameEn}
-          className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+          alt={displayName}
+          loading="lazy"
+          className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
           onError={(e) => {
-            // fallback placeholder if image url is broken
             (e.target as HTMLImageElement).src =
               "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80";
           }}
         />
-        <div className="absolute top-2.5 start-2.5 flex flex-wrap gap-1.5">
-          {isAvailable ? (
-            <Badge variant="success" className="font-semibold shadow-sm">
-              {t(
-                `متاح (${equipment.availableQuantity})`,
-                `Available (${equipment.availableQuantity})`
-              )}
-            </Badge>
-          ) : (
-            <Badge variant="destructive" className="font-semibold shadow-sm">
-              {t("غير متوفر", "Out of Stock")}
+
+        {/* Gradient Scrim for Contrast */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none" />
+
+        {/* Top Floating Status Badges */}
+        <div className="absolute top-3 start-3 end-3 flex items-center justify-between pointer-events-none">
+          {displayCategory && (
+            <Badge
+              variant="secondary"
+              className="px-2.5 py-0.5 text-[11px] font-medium backdrop-blur-md bg-background/90 text-foreground border border-border/50 shadow-sm"
+            >
+              {displayCategory}
             </Badge>
           )}
 
-          {equipment.category && (
-            <Badge variant="secondary" className="shadow-sm backdrop-blur bg-background/80">
-              {locale === "ar" ? equipment.category.nameAr : equipment.category.nameEn}
+          {isAvailable ? (
+            <Badge className="ms-auto flex items-center gap-1 bg-emerald-600/95 text-white hover:bg-emerald-600 text-[11px] font-medium shadow-sm">
+              <CheckCircle2 className="h-3 w-3" aria-hidden="true" />
+              <span>
+                {t(
+                  `متاح (${equipment.availableQuantity})`,
+                  `${equipment.availableQuantity} Available`
+                )}
+              </span>
+            </Badge>
+          ) : (
+            <Badge variant="destructive" className="ms-auto text-[11px] font-medium shadow-sm">
+              {t("غير متوفر", "Out of Stock")}
             </Badge>
           )}
         </div>
       </div>
 
-      {/* Item info */}
-      <CardContent className="flex-1 p-5">
-        <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <Layers className="h-3.5 w-3.5" />
-            {t(`إجمالي المخزون: ${equipment.totalQuantity}`, `Total: ${equipment.totalQuantity}`)}
+      {/* Content Container */}
+      <CardContent className="flex flex-1 flex-col p-5">
+        <div className="mb-2.5 flex items-center justify-between text-xs text-muted-foreground font-mono">
+          <span className="inline-flex items-center gap-1.5">
+            <Layers className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>{t(`الإجمالي: ${equipment.totalQuantity}`, `Total: ${equipment.totalQuantity}`)}</span>
           </span>
-          <span className="text-xs">
-            {equipment.reservedQuantity > 0 &&
-              t(`محجوز: ${equipment.reservedQuantity}`, `Reserved: ${equipment.reservedQuantity}`)}
-          </span>
+          {equipment.reservedQuantity > 0 && (
+            <span className="text-amber-600 dark:text-amber-400 font-sans">
+              {t(`محجوز: ${equipment.reservedQuantity}`, `Reserved: ${equipment.reservedQuantity}`)}
+            </span>
+          )}
         </div>
 
-        <h3 className="line-clamp-1 text-lg font-bold tracking-tight text-foreground">
-          {locale === "ar" ? equipment.nameAr : equipment.nameEn}
+        <h3 className="line-clamp-1 text-base font-bold text-foreground group-hover:text-primary transition-colors">
+          <Link href={`/catalog/${equipment.id}`} className="focus:outline-none focus:underline">
+            {displayName}
+          </Link>
         </h3>
 
-        <p className="mt-2 line-clamp-2 text-sm text-muted-foreground leading-relaxed">
-          {locale === "ar" ? equipment.descriptionAr : equipment.descriptionEn}
+        <p className="mt-2 line-clamp-2 text-xs sm:text-sm leading-relaxed text-muted-foreground">
+          {displayDesc}
         </p>
+
+        {/* Fixed Height Inline Warning Area (Prevents Layout Shifting) */}
+        <div className="mt-auto pt-4 min-h-[28px]">
+          {isActionDisabled && (
+            <div className="flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400">
+              <ShieldAlert className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span className="truncate">{getDisabledReason()}</span>
+            </div>
+          )}
+        </div>
       </CardContent>
 
-      {/* Action buttons */}
-      <CardFooter className="grid grid-cols-2 gap-2.5 p-5 pt-0 border-t bg-muted/20">
-        <Button variant="outline" size="sm" asChild className="w-full">
+      {/* Action Footer */}
+      <CardFooter className="grid grid-cols-2 gap-2 p-4 pt-0">
+        <Button
+          variant="outline"
+          size="sm"
+          asChild
+          className="h-9 w-full text-xs font-medium border-border/80 hover:bg-accent focus-visible:ring-2 focus-visible:ring-primary"
+        >
           <Link href={`/catalog/${equipment.id}`}>
-            <Eye className="h-4 w-4 me-1.5" />
-            {t("المواصفات", "Specs")}
+            <Eye className="h-3.5 w-3.5 me-1.5" aria-hidden="true" />
+            <span>{t("المواصفات", "Specs")}</span>
           </Link>
         </Button>
 
@@ -129,20 +165,17 @@ export function EquipmentCard({
           size="sm"
           disabled={isActionDisabled}
           onClick={() => onRequestBooking(equipment)}
-          className="w-full font-semibold"
-          title={getDisabledReason()}
+          className="h-9 w-full text-xs font-semibold shadow-sm transition-all active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-primary"
+          aria-label={
+            isActionDisabled
+              ? `${displayName}: ${getDisabledReason()}`
+              : `${t("طلب حجز", "Book Now")} ${displayName}`
+          }
         >
-          <Calendar className="h-4 w-4 me-1.5" />
-          {isAvailable ? t("طلب حجز", "Book Now") : t("غير متاح", "Unavailable")}
+          <Calendar className="h-3.5 w-3.5 me-1.5" aria-hidden="true" />
+          <span>{isAvailable ? t("طلب حجز", "Book Now") : t("غير متاح", "Unavailable")}</span>
         </Button>
       </CardFooter>
-
-      {/* Disabled reason hint bar if applicable */}
-      {isActionDisabled && (
-        <div className="bg-amber-500/10 px-4 py-1.5 text-center text-xs text-amber-700 dark:text-amber-400 font-medium border-t border-amber-500/20">
-          {getDisabledReason()}
-        </div>
-      )}
     </Card>
   );
 }

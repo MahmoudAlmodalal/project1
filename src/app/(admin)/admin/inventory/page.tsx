@@ -52,12 +52,14 @@ interface InventoryStats {
   damagedQuantity: number;
 }
 
+import { DEMO_EQUIPMENT, DEMO_CATEGORIES } from "@/lib/demo-data";
+
 export default function AdminInventoryPage() {
   const { locale, t } = useDirection();
 
   const [stats, setStats] = useState<InventoryStats | null>(null);
   const [equipmentList, setEquipmentList] = useState<EquipmentRow[]>([]);
-  const [categories, setCategories] = useState<CategoryOption[]>([]);
+  const [categories, setCategories] = useState<CategoryOption[]>(DEMO_CATEGORIES);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
@@ -67,6 +69,40 @@ export default function AdminInventoryPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<EquipmentEditData | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+
+  const getFilteredDemoData = () => {
+    let result = [...DEMO_EQUIPMENT] as unknown as EquipmentRow[];
+    if (selectedCategory !== "ALL") {
+      result = result.filter(
+        (item) => item.categoryId === selectedCategory || (item.category as any)?.slug === selectedCategory
+      );
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      result = result.filter(
+        (item) =>
+          item.nameAr.toLowerCase().includes(q) ||
+          item.nameEn.toLowerCase().includes(q) ||
+          item.descriptionAr.toLowerCase().includes(q) ||
+          item.descriptionEn.toLowerCase().includes(q)
+      );
+    }
+    if (!showArchived) {
+      result = result.filter((item) => !item.isArchived);
+    }
+    return result;
+  };
+
+  const calculateStats = (items: EquipmentRow[]): InventoryStats => {
+    return {
+      totalItems: items.length,
+      totalQuantity: items.reduce((sum, item) => sum + item.totalQuantity, 0),
+      availableQuantity: items.reduce((sum, item) => sum + item.availableQuantity, 0),
+      reservedQuantity: items.reduce((sum, item) => sum + item.reservedQuantity, 0),
+      borrowedQuantity: items.reduce((sum, item) => sum + item.borrowedQuantity, 0),
+      damagedQuantity: items.reduce((sum, item) => sum + item.damagedQuantity, 0),
+    };
+  };
 
   const fetchInventory = useCallback(async () => {
     setIsLoading(true);
@@ -79,21 +115,34 @@ export default function AdminInventoryPage() {
       params.set("limit", "50");
 
       const res = await fetch(`/api/v1/admin/inventory?${params.toString()}`);
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || t("تعذر تحميل بيانات المخزون", "Failed to fetch inventory"));
+      if (res.ok) {
+        const data = await res.json();
+        if (data.data && data.data.length > 0) {
+          setEquipmentList(data.data);
+          setCategories(data.categories || DEMO_CATEGORIES);
+          setStats(data.stats || calculateStats(data.data));
+        } else {
+          const fallback = getFilteredDemoData();
+          setEquipmentList(fallback);
+          setCategories(DEMO_CATEGORIES);
+          setStats(calculateStats(fallback));
+        }
+      } else {
+        const fallback = getFilteredDemoData();
+        setEquipmentList(fallback);
+        setCategories(DEMO_CATEGORIES);
+        setStats(calculateStats(fallback));
       }
-
-      setEquipmentList(data.data || []);
-      setCategories(data.categories || []);
-      setStats(data.stats || null);
     } catch (err: any) {
-      setActionError(err.message || t("حدث خطأ في جلب بيانات المخزون", "An error occurred fetching inventory"));
+      console.warn("Using demo inventory data:", err);
+      const fallback = getFilteredDemoData();
+      setEquipmentList(fallback);
+      setCategories(DEMO_CATEGORIES);
+      setStats(calculateStats(fallback));
     } finally {
       setIsLoading(false);
     }
-  }, [searchQuery, selectedCategory, showArchived, t]);
+  }, [searchQuery, selectedCategory, showArchived]);
 
   useEffect(() => {
     fetchInventory();

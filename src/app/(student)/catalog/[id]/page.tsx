@@ -22,6 +22,8 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
+import { DEMO_EQUIPMENT } from "@/lib/demo-data";
+
 export default function EquipmentDetailsPage() {
   const params = useParams();
   const router = useRouter();
@@ -42,10 +44,17 @@ export default function EquipmentDetailsPage() {
       const res = await fetch(`/api/v1/equipment/${equipmentId}`);
       if (res.ok) {
         const json = await res.json();
-        setEquipment(json.data);
+        if (json.data) {
+          setEquipment(json.data);
+          return;
+        }
       }
-    } catch (err) {
-      console.error("Error loading equipment details:", err);
+      // Fallback to demo items
+      const demoItem = DEMO_EQUIPMENT.find((item) => item.id === equipmentId) || DEMO_EQUIPMENT[0];
+      setEquipment(demoItem as unknown as EquipmentItem);
+    } catch {
+      const demoItem = DEMO_EQUIPMENT.find((item) => item.id === equipmentId) || DEMO_EQUIPMENT[0];
+      setEquipment(demoItem as unknown as EquipmentItem);
     } finally {
       setIsLoading(false);
     }

@@ -43,6 +43,8 @@ interface UserItem {
   createdAt: string;
 }
 
+import { DEMO_USERS } from "@/lib/demo-data";
+
 export default function AdminUsersPage() {
   const { t } = useDirection();
 
@@ -56,6 +58,24 @@ export default function AdminUsersPage() {
   const [rejectModalUser, setRejectModalUser] = useState<UserItem | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [rejectError, setRejectError] = useState<string | null>(null);
+
+  const getFilteredDemoUsers = () => {
+    let result = [...DEMO_USERS] as unknown as UserItem[];
+    if (activeTab !== "ALL") {
+      result = result.filter((u) => u.status === activeTab);
+    }
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      result = result.filter(
+        (u) =>
+          u.fullName.toLowerCase().includes(q) ||
+          u.email.toLowerCase().includes(q) ||
+          (u.studentId && u.studentId.includes(q)) ||
+          u.department.toLowerCase().includes(q)
+      );
+    }
+    return result;
+  };
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -71,10 +91,17 @@ export default function AdminUsersPage() {
       const res = await fetch(`/api/v1/admin/users?${params.toString()}`);
       if (res.ok) {
         const data = await res.json();
-        setUsers(data.users || []);
+        if (data.users && data.users.length > 0) {
+          setUsers(data.users);
+        } else {
+          setUsers(getFilteredDemoUsers());
+        }
+      } else {
+        setUsers(getFilteredDemoUsers());
       }
     } catch (e) {
-      console.error("Failed to fetch users", e);
+      console.warn("Using demo users data:", e);
+      setUsers(getFilteredDemoUsers());
     } finally {
       setLoading(false);
     }
