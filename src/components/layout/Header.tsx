@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useDirection } from "./DirectionProvider";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Languages, LogOut, Package, User } from "lucide-react";
+import { Languages, LogOut, Package, User, LayoutDashboard, Compass } from "lucide-react";
 import { SessionUser } from "@/types/auth";
 
 interface HeaderProps {
@@ -33,10 +33,21 @@ export function Header({ user }: HeaderProps) {
               {t("إعارة وتجهيز العتاد المعملي", "Lab Equipment Loan Platform")}
             </span>
           </div>
+          <Badge variant="secondary" className="hidden md:inline-flex rounded-full bg-primary/10 text-primary border-primary/15 text-[10px]">
+            {t("نسخة تجريبية", "Demo")}
+          </Badge>
         </Link>
 
         {/* Right action controls */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
+          <nav className="hidden lg:flex items-center gap-1 rounded-xl bg-muted/60 p-1" aria-label={t("التنقل الرئيسي", "Main navigation")}>
+            <Button variant="ghost" size="sm" asChild className="h-8 px-3 text-xs font-medium">
+              <Link href="/catalog"><Compass className="h-3.5 w-3.5 me-1.5" />{t("الكتالوج", "Catalog")}</Link>
+            </Button>
+            <Button variant="ghost" size="sm" asChild className="h-8 px-3 text-xs font-medium">
+              <Link href="/portal"><LayoutDashboard className="h-3.5 w-3.5 me-1.5" />{t("طلباتي", "My Loans")}</Link>
+            </Button>
+          </nav>
           {/* Language Switcher */}
           <Button
             variant="outline"
