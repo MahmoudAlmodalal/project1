@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search, SlidersHorizontal, RefreshCw, AlertTriangle, Layers } from "lucide-react";
+import { Search, SlidersHorizontal, RefreshCw, AlertTriangle, Layers, PackageCheck, Boxes, Sparkles } from "lucide-react";
 import { DEMO_EQUIPMENT, DEMO_CATEGORIES } from "@/lib/demo-data";
 
 interface Category {
@@ -84,8 +84,14 @@ export default function CatalogPage() {
   return (
     <div className="space-y-6">
       {/* Top Banner / Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-2 border-b border-border/60">
-        <div>
+      <div className="relative overflow-hidden rounded-2xl border border-primary/15 bg-gradient-to-br from-primary/[0.08] via-card to-violet-500/[0.06] p-5 sm:p-6 shadow-sm">
+        <div className="pointer-events-none absolute -top-16 end-8 h-40 w-40 rounded-full bg-primary/10 blur-3xl" />
+        <div className="relative flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-primary/15 bg-background/70 px-2.5 py-1 text-[11px] font-semibold text-primary">
+              <Sparkles className="h-3.5 w-3.5" />
+              {t("تجربة استعارة أبسط", "A simpler borrowing experience")}
+            </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
             {t("كتالوج المعدات المعملية", "Laboratory Equipment Catalog")}
           </h1>
@@ -95,9 +101,9 @@ export default function CatalogPage() {
               "Browse and reserve available lab equipment for students and researchers with 1-click booking."
             )}
           </p>
-        </div>
+          </div>
 
-        <Button
+          <Button
           variant="outline"
           size="sm"
           onClick={() => {
@@ -108,7 +114,25 @@ export default function CatalogPage() {
         >
           <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin" : ""}`} aria-hidden="true" />
           <span>{t("تحديث المخزون", "Refresh Stock")}</span>
-        </Button>
+          </Button>
+        </div>
+        <div className="relative mt-5 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3">
+          <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/75 px-3 py-2.5">
+            <PackageCheck className="h-4 w-4 text-emerald-600" />
+            <span className="text-xs text-muted-foreground">{t("متاح الآن", "Available now")}</span>
+            <strong className="text-sm">{DEMO_EQUIPMENT.filter((item) => item.availableQuantity > 0).length}</strong>
+          </div>
+          <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/75 px-3 py-2.5">
+            <Boxes className="h-4 w-4 text-primary" />
+            <span className="text-xs text-muted-foreground">{t("إجمالي الأجهزة", "Total items")}</span>
+            <strong className="text-sm">{DEMO_EQUIPMENT.length}</strong>
+          </div>
+          <div className="flex items-center gap-2 rounded-xl border border-border/70 bg-background/75 px-3 py-2.5">
+            <Layers className="h-4 w-4 text-violet-600" />
+            <span className="text-xs text-muted-foreground">{t("الفئات", "Categories")}</span>
+            <strong className="text-sm">{DEMO_CATEGORIES.length}</strong>
+          </div>
+        </div>
       </div>
 
       {/* Constraints Warning Alert if applicable */}
