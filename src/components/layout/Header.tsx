@@ -15,14 +15,7 @@ interface HeaderProps {
 export function Header({ user }: HeaderProps) {
   const { locale, toggleLocale, t } = useDirection();
 
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/v1/auth/logout", { method: "POST" });
-      window.location.href = "/login";
-    } catch {
-      window.location.href = "/login";
-    }
-  };
+  const handleLogout = () => { window.location.href = "/login"; };
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

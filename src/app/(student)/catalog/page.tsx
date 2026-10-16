@@ -33,22 +33,9 @@ export default function CatalogPage() {
   const [isDelinquent, setIsDelinquent] = useState<boolean>(false);
 
   const fetchLoansQuota = async () => {
-    try {
-      const res = await fetch("/api/v1/loans");
-      if (res.ok) {
-        const data = await res.json();
-        const loans: any[] = data.data || [];
-        const activeLoans = loans.filter((l) =>
-          ["PENDING_REVIEW", "APPROVED", "CHECKED_OUT"].includes(l.status)
-        );
-        const overdueLoans = loans.filter((l) => l.status === "OVERDUE");
-
-        setHasMaxLoans(activeLoans.length >= 2);
-        setIsDelinquent(overdueLoans.length > 0);
-      }
-    } catch {
-      // ignore
-    }
+    const requests = JSON.parse(localStorage.getItem("borrowhub-demo-requests") || "[]");
+    setHasMaxLoans(requests.length >= 2);
+    setIsDelinquent(false);
   };
 
   const getFilteredDemoData = () => {
@@ -76,39 +63,9 @@ export default function CatalogPage() {
 
   const fetchCatalog = async () => {
     setIsLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (selectedCategory !== "all") {
-        params.append("category", selectedCategory);
-      }
-      if (searchQuery.trim()) {
-        params.append("search", searchQuery.trim());
-      }
-      if (availableOnly) {
-        params.append("available_only", "true");
-      }
-
-      const res = await fetch(`/api/v1/equipment?${params.toString()}`);
-      if (res.ok) {
-        const result = await res.json();
-        if (result.data && result.data.length > 0) {
-          setItems(result.data);
-          if (result.categories && result.categories.length > 0) {
-            setCategories(result.categories);
-          }
-        } else {
-          // Fall back to filtered demo data
-          setItems(getFilteredDemoData());
-        }
-      } else {
-        setItems(getFilteredDemoData());
-      }
-    } catch (err) {
-      console.warn("Using demo catalog data:", err);
-      setItems(getFilteredDemoData());
-    } finally {
-      setIsLoading(false);
-    }
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    setItems(getFilteredDemoData());
+    setIsLoading(false);
   };
 
   useEffect(() => {

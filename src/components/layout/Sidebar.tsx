@@ -15,7 +15,7 @@ import {
   Boxes,
   Users,
 } from "lucide-react";
-import { Role } from "@prisma/client";
+import { Role } from "@/types/auth";
 
 interface SidebarProps {
   role?: Role;

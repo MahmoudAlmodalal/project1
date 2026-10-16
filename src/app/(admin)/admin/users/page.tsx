@@ -28,7 +28,7 @@ import {
   Loader2,
   RefreshCw,
 } from "lucide-react";
-import { UserStatus } from "@prisma/client";
+import { UserStatus } from "@/types/auth";
 
 interface UserItem {
   id: string;

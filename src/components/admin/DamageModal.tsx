@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, Loader2 } from "lucide-react";
-import { DamageSeverity } from "@prisma/client";
+type DamageSeverity = "MINOR" | "MODERATE" | "SEVERE" | "TOTAL_LOSS";
+const DamageSeverity = { MINOR: "MINOR", MODERATE: "MODERATE", SEVERE: "SEVERE", TOTAL_LOSS: "TOTAL_LOSS" } as const;
 
 interface DamageModalProps {
   isOpen: boolean;

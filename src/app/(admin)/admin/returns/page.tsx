@@ -25,7 +25,8 @@ import {
   CalendarPlus,
   ShieldAlert,
 } from "lucide-react";
-import { LoanStatus, DamageSeverity } from "@prisma/client";
+type LoanStatus = "PENDING_REVIEW" | "APPROVED" | "CHECKED_OUT" | "OVERDUE" | "RETURNED";
+type DamageSeverity = "MINOR" | "MODERATE" | "SEVERE" | "TOTAL_LOSS";
 
 interface ReturnQueueItem {
   id: string;
@@ -192,7 +193,7 @@ export default function ReturnsInspectionPage() {
     if (!dateStr) return null;
     const dueDate = new Date(dateStr);
     const now = new Date();
-    const isPast = dueDate.getTime() < now.getTime() || status === LoanStatus.OVERDUE;
+    const isPast = dueDate.getTime() < now.getTime() || status === "OVERDUE";
 
     return (
       <div className={`flex items-center gap-1.5 text-xs font-medium ${isPast ? "text-destructive font-bold" : "text-muted-foreground"}`}>
@@ -301,7 +302,7 @@ export default function ReturnsInspectionPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4">
           {loans.map((loan) => {
-            const isOverdue = loan.status === LoanStatus.OVERDUE || (loan.expectedReturnDate && new Date(loan.expectedReturnDate).getTime() < Date.now());
+            const isOverdue = loan.status === "OVERDUE" || (loan.expectedReturnDate && new Date(loan.expectedReturnDate).getTime() < Date.now());
 
             return (
               <Card key={loan.id} className={`overflow-hidden border transition-colors shadow-sm ${isOverdue ? "border-destructive/60 bg-destructive/5" : "border-border/70 hover:border-primary/40"}`}>

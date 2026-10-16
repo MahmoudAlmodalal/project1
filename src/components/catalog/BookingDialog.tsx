@@ -67,26 +67,10 @@ export function BookingDialog({
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/v1/loans", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          equipment_id: equipment.id,
-          duration_days: durationDays,
-          academic_justification: academicJustification.trim(),
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setErrorMessage(
-          data.message ||
-            t("حدث خطأ أثناء تقديم طلب الاستعارة.", "Failed to submit booking request.")
-        );
-        setIsSubmitting(false);
-        return;
-      }
+      await new Promise((resolve) => setTimeout(resolve, 650));
+      const demoRequest = { equipmentId: equipment.id, durationDays, academicJustification: academicJustification.trim(), createdAt: new Date().toISOString() };
+      const existing = JSON.parse(localStorage.getItem("borrowhub-demo-requests") || "[]");
+      localStorage.setItem("borrowhub-demo-requests", JSON.stringify([...existing, demoRequest]));
 
       setSuccessMessage(
         t(
@@ -104,9 +88,7 @@ export function BookingDialog({
         if (onSuccess) onSuccess();
       }, 1500);
     } catch {
-      setErrorMessage(
-        t("تعذر الاتصال بالخادم، يرجى المحاولة ثانية.", "Network error, please try again.")
-      );
+      setErrorMessage(t("تعذر حفظ الطلب التجريبي.", "Could not save demo request."));
       setIsSubmitting(false);
     }
   };

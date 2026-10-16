@@ -24,7 +24,7 @@ import {
   ChevronUp,
   Package,
 } from "lucide-react";
-import { LoanStatus } from "@prisma/client";
+type LoanStatus = "PENDING_REVIEW" | "APPROVED" | "CHECKED_OUT" | "OVERDUE" | "RETURNED";
 
 interface LoanQueueItem {
   id: string;

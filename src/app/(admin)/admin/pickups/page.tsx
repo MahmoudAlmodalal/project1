@@ -23,7 +23,7 @@ import {
   CalendarPlus,
   ShieldCheck,
 } from "lucide-react";
-import { LoanStatus } from "@prisma/client";
+type LoanStatus = "PENDING_REVIEW" | "APPROVED" | "CHECKED_OUT" | "OVERDUE" | "RETURNED";
 
 interface PickupQueueItem {
   id: string;
