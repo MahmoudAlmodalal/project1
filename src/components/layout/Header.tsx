@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useDirection } from "./DirectionProvider";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Languages, LogOut, Package, User, LayoutDashboard, Compass } from "lucide-react";
+import { Languages, LogOut, User, LayoutDashboard, Compass } from "lucide-react";
 import { SessionUser } from "@/types/auth";
+import { BrandMark } from "./BrandMark";
 
 interface HeaderProps {
   user?: SessionUser | null;
@@ -21,18 +22,8 @@ export function Header({ user }: HeaderProps) {
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4 sm:px-8 mx-auto">
         {/* Brand / Logo */}
-        <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold shadow">
-            <Package className="h-5 w-5" />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold text-lg leading-tight tracking-tight">
-              {t("نظام بورو هب", "BorrowHub")}
-            </span>
-            <span className="text-xs text-muted-foreground hidden sm:inline">
-              {t("إعارة وتجهيز العتاد المعملي", "Lab Equipment Loan Platform")}
-            </span>
-          </div>
+        <Link href="/" className="flex items-center gap-3" aria-label={t("الصفحة الرئيسية لبورو هب", "BorrowHub home")}>
+          <BrandMark />
           <Badge variant="secondary" className="hidden md:inline-flex rounded-full bg-primary/10 text-primary border-primary/15 text-[10px]">
             {t("نسخة تجريبية", "Demo")}
           </Badge>
