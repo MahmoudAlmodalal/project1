@@ -21,6 +21,12 @@ const config: Config = {
         heading: ["var(--font-cairo)", "var(--font-ibm-plex-arabic)", "sans-serif"],
       },
       colors: {
+        brand: {
+          indigo: "#4F46E5",
+          violet: "#7C3AED",
+          ink: "#172554",
+          mist: "#EEF2FF",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
