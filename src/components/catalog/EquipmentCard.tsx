@@ -64,6 +64,7 @@ export function EquipmentCard({
       ? equipment.category.nameAr
       : equipment.category.nameEn
     : null;
+  const availabilityPercent = Math.round((equipment.availableQuantity / Math.max(equipment.totalQuantity, 1)) * 100);
 
   return (
     <Card className="group relative flex flex-col h-full overflow-hidden rounded-xl border border-border/70 bg-card transition-all duration-200 hover:border-primary/40 hover:shadow-lg hover:-translate-y-0.5 focus-within:ring-2 focus-within:ring-primary/40">
@@ -124,6 +125,16 @@ export function EquipmentCard({
               {t(`محجوز: ${equipment.reservedQuantity}`, `Reserved: ${equipment.reservedQuantity}`)}
             </span>
           )}
+        </div>
+
+        <div className="mb-3 space-y-1.5" aria-label={t(`نسبة التوفر ${availabilityPercent}%`, `${availabilityPercent}% available`)}>
+          <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+            <span>{t("نسبة التوفر", "Availability")}</span>
+            <span className="font-semibold text-foreground">{availabilityPercent}%</span>
+          </div>
+          <div className="h-1.5 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={availabilityPercent} aria-valuemin={0} aria-valuemax={100}>
+            <div className={`h-full rounded-full transition-all ${availabilityPercent > 50 ? "bg-emerald-500" : availabilityPercent > 0 ? "bg-amber-500" : "bg-rose-500"}`} style={{ width: `${availabilityPercent}%` }} />
+          </div>
         </div>
 
         <h3 className="line-clamp-1 text-base font-bold text-foreground group-hover:text-primary transition-colors">
