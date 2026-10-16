@@ -82,11 +82,17 @@ export function Sidebar({ role = "STUDENT" }: SidebarProps) {
   const links = role === "ADMIN" ? adminLinks : studentLinks;
 
   return (
-    <aside className="w-full md:w-64 shrink-0 border-e bg-card p-4">
-      <div className="mb-4 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        {role === "ADMIN" ? t("لوحة إدارة المعمل", "Lab Admin Portal") : t("بوابة الطالب", "Student Portal")}
+    <aside className="w-full shrink-0 border-e border-border/70 bg-card/80 p-4 backdrop-blur md:w-64">
+      <div className="mb-4 flex items-center gap-2 rounded-xl border border-primary/10 bg-primary/[0.04] px-3 py-3">
+        <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_0_4px_rgba(16,185,129,.12)]" />
+        <div className="min-w-0">
+          <p className="truncate text-[11px] font-bold uppercase tracking-[0.08em] text-primary">BorrowHub</p>
+          <p className="truncate text-xs font-medium text-muted-foreground">
+            {role === "ADMIN" ? t("لوحة إدارة المعمل", "Lab Admin Portal") : t("بوابة الطالب", "Student Portal")}
+          </p>
+        </div>
       </div>
-      <nav className="flex flex-col space-y-1">
+      <nav className="flex flex-col gap-1">
         {links.map((link) => {
           const Icon = link.icon;
           const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`);
@@ -95,13 +101,13 @@ export function Sidebar({ role = "STUDENT" }: SidebarProps) {
               key={link.href}
               href={link.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                "group flex items-center gap-3 rounded-xl border px-3 py-2.5 text-sm font-medium transition-all",
                 isActive
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  ? "border-primary/20 bg-gradient-to-r from-primary to-violet-600 text-primary-foreground shadow-[0_8px_18px_rgba(79,70,229,.18)]"
+                  : "border-transparent text-muted-foreground hover:border-primary/10 hover:bg-primary/[0.05] hover:text-primary"
               )}
             >
-              <Icon className="h-4 w-4 shrink-0" />
+              <Icon className={cn("h-4 w-4 shrink-0 transition-transform", !isActive && "group-hover:scale-110")} />
               <span>{t(link.labelAr, link.labelEn)}</span>
             </Link>
           );
